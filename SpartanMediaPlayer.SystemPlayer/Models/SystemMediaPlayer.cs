@@ -15,7 +15,6 @@ namespace SpartanMediaPlayer.Models
 
 
         private static TimeSpan SeekStep = TimeSpan.FromSeconds(2.0);
-        private Equalizer _equalizer = new Equalizer { FreqLevels = new Dictionary<double, double>() };
         private MediaPlayer _player = new MediaPlayer();
         private PlayList _currentPlayList;
         private MediaFile _currentFile;

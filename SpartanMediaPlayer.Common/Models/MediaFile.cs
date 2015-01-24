@@ -10,6 +10,7 @@ namespace SpartanMediaPlayer.Models
     {
         public string Path { get; set; }
         public int Rating { get; set; }
+
         public TimeSpan Duration { get; set; }
 
         public string Author { get; set; }

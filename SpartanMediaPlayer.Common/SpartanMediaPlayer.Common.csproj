@@ -37,7 +37,6 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Equalizer.cs" />
     <Compile Include="Models\IMeidaPlayer.cs" />
     <Compile Include="Models\MediaFile.cs" />
     <Compile Include="Models\PlayList.cs" />
