@@ -12,20 +12,12 @@ namespace SpartanMediaPlayer.Models
 {
     public class SystemMediaPlayer : IMediaPlayer
     {
-
-
         private static TimeSpan SeekStep = TimeSpan.FromSeconds(2.0);
         private MediaPlayer _player = new MediaPlayer();
         private PlayList _currentPlayList;
         private MediaFile _currentFile;
-        private int _currentFileIndex;
+        private int _currentFileIndex = -1;
 
-
-        public Equalizer Equalizer
-        {
-            get { return _equalizer; }
-            set { _equalizer = value; }
-        }
 
         public TimeSpan CurrentPosition
         {
@@ -47,7 +39,6 @@ namespace SpartanMediaPlayer.Models
                 OnPropertyChanged();
             }
         }
-
         public MediaFile CurrentFile
         {
             get { return _currentFile; }
@@ -65,7 +56,7 @@ namespace SpartanMediaPlayer.Models
             }
         }
 
-        public double MainLevel
+        public double Volume
         {
             get { return _player.Volume; }
             set
@@ -76,27 +67,6 @@ namespace SpartanMediaPlayer.Models
             }
         }
 
-        public double Balance
-        {
-            get { return _player.Balance; }
-            set
-            {
-                if (value.Equals(_player.Balance)) return;
-                _player.Balance = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool Muted
-        {
-            get { return _player.IsMuted; }
-            set
-            {
-                if (value.Equals(_player.IsMuted)) return;
-                _player.IsMuted = value;
-                OnPropertyChanged();
-            }
-        }
 
 
         public void Play()

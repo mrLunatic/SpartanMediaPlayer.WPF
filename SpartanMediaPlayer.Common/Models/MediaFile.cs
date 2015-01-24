@@ -8,14 +8,40 @@ namespace SpartanMediaPlayer.Models
 {
     public class MediaFile
     {
+        /// <summary>
+        /// Путь к файлу на локальной машине
+        /// </summary>
         public string Path { get; set; }
+
+        /// <summary>
+        /// Рейтинг трека
+        /// </summary>
         public int Rating { get; set; }
 
+        /// <summary>
+        /// Продолжительность трека
+        /// </summary>
         public TimeSpan Duration { get; set; }
 
+        /// <summary>
+        /// Исполнитель трека
+        /// </summary>
         public string Author { get; set; }
+
+        /// <summary>
+        /// Название трека
+        /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// Название альбома
+        /// </summary>
         public string Album { get; set; }
+
+        /// <summary>
+        /// Жанр трека
+        /// </summary>
         public string Genre { get; set; }
+
     }
 }

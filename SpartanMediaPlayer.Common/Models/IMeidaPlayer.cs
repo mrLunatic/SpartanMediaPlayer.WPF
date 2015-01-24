@@ -14,15 +14,17 @@ namespace SpartanMediaPlayer.Models
         PlayList CurrentPlayList { get; set; }
         MediaFile CurrentFile { get; set; }
 
-        double MainLevel { get; set; }
+        double Volume { get; set; }
+        bool Shuffle { get; set; }
+        RepeatMode RepeatMode { get; set; }
 
         void Play();
         void Pause();
         void Stop();
-        void PlayNext();
-        void SeekForward(TimeSpan timeSpan);
 
+        void PlayNext();
         void PlayPrev();
-        void SeekBackward(TimeSpan timeSpan);
+
+        void Seek(TimeSpan timeSpan);   
     }
 }
