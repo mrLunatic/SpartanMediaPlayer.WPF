@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,27 +15,53 @@ using SpartanMediaPlayer.Annotations;
 
 namespace SpartanMediaPlayer.Models
 {
-    public class SystemMediaPlayer : IMediaPlayer
+    public class SystemMediaPlayer : IMediaPlayer, INotifyPropertyChanged
     {
         private readonly MediaElement _player = new MediaElement();
         private readonly DispatcherTimer _timer = new DispatcherTimer();
+        private readonly Random _random = new Random();
 
-        private int currentTrackIndex = 0;
-        private IList<int> playedTrackIndexes = new List<int>(); 
+        private readonly IList<int> _playedTrackIndexes = new List<int>(); 
 
        
 
         #region IMediaPlayer
 
+        public PlayerState PlayerState
+        {
+            get { return _playerState; }
+            private set
+            {
+                if (value == _playerState) return;
+                _playerState = value;
+                OnPropertyChanged();
+            }
+        }
+        private PlayerState _playerState;
+
         public TimeSpan Position
         {
-            get { return _player.Position; }
+            get { return _position; }
+            private set
+            {
+                if (value.Equals(_position)) return;
+                _position = value;
+                OnPropertyChanged();
+            }
         }
+        private TimeSpan _position;
 
         public TimeSpan Duration
         {
-            get { return _player.NaturalDuration.TimeSpan; }
+            get { return _duration; }
+            private set
+            {
+                if (value.Equals(_duration)) return;
+                _duration = value;
+                OnPropertyChanged();
+            }
         }
+        private TimeSpan _duration;
 
         public PlayList PlayList
         {
@@ -48,25 +75,52 @@ namespace SpartanMediaPlayer.Models
         }
         private PlayList _playList;
 
+
+        public MediaFile MediaFile
+        {
+            get { return _mediaFile; }
+            private set
+            {
+                if (Equals(value, _mediaFile)) return;
+                _mediaFile = value;
+                OnPropertyChanged();
+                _player.Source = _mediaFile.Uri;
+            }
+        }
+        private MediaFile _mediaFile;
         
         public int Track
         {
             get { return _track; }
             set
             {
+                if (_track == value) return;
+
                 _track = value;
+                OnPropertyChanged();
+
+                _playedTrackIndexes.Add(_track);
 
                 if (PlayList == null) return;
 
-                _player.Source = PlayList.Tracks[_track].Uri;
+                MediaFile = PlayList.Tracks[_track];
             }
         }
+        private int _track;
 
         public double Volume
         {
-            get { return _player.Volume; }
-            set { _player.Volume = value; }
+            get { return _volume; }
+            set
+            {
+                if (Equals(_volume, value)) return;
+
+                _volume = value;
+                _player.Volume = value;
+                OnPropertyChanged();
+            }
         }
+        private double _volume;
 
         public bool Shuffle
         {
@@ -78,24 +132,37 @@ namespace SpartanMediaPlayer.Models
             }
         }
         private bool _shuffle;
-        private int _track;
-
-        public RepeatMode RepeatMode { get; set; }
-
+        
+        public RepeatMode RepeatMode
+        {
+            get { return _repeatMode; }
+            set
+            {
+                if (value == _repeatMode) return;
+                _repeatMode = value;
+                OnPropertyChanged();
+            }
+        }
+        private RepeatMode _repeatMode;
+       
         public void Play()
         {
             _player.Play();
+            PlayerState = PlayerState.Playing;
         }
 
         public void Pause()
         {
-            if (_player.CanPause)
-                _player.Pause();
+            if (!_player.CanPause) return;
+
+            _player.Pause();
+            PlayerState = PlayerState.Paused;
         }
 
         public void Stop()
         {
             _player.Stop();
+            PlayerState = PlayerState.Stopped;
         }
 
         public void PlayNext()
@@ -104,17 +171,25 @@ namespace SpartanMediaPlayer.Models
 
             if (PlayList == null) return;
 
+            var index = GetNextTrackIndex();
 
+            if (index < 0) return;
 
-
-            
+            Track = index;
             Play();
         }
 
         public void PlayPrev()
         {
             Stop();
-            Track = GetPrevFile();
+
+            if (PlayList == null) return;
+
+            var index = GetPrevTrackIndex();
+
+            if (index < 0) return;
+
+            Track = index;
             Play();
         }
 
@@ -127,19 +202,62 @@ namespace SpartanMediaPlayer.Models
 
         public SystemMediaPlayer()
         {
-            _player.MediaEnded += OnMediaEnded;
-            _player.MediaOpened += OnMediaOpened;
+            _player.MediaEnded += (sender, args) => PlayNext();
         }
 
-
-        private void OnMediaEnded(object sender, System.Windows.RoutedEventArgs e)
+        private int GetNextTrackIndex()
         {
-            throw new NotImplementedException();
+
+            if (RepeatMode == RepeatMode.One)
+                return _currentTrackIndex;
+
+            var allIndexes = Enumerable.Range(0, PlayList.Tracks.Count);
+
+            IList<int> avaliableIndexes = allIndexes.Except(_playedTrackIndexes).ToList();
+
+
+
+            if (avaliableIndexes.Any())
+            {
+                var index = Shuffle? _random.Next(0, avaliableIndexes.Count()) : 0;
+
+                return avaliableIndexes.ElementAt(index);
+            }
+
+            if (RepeatMode == RepeatMode.None)
+                return -1;
+            
+            _playedTrackIndexes.Clear();
+
+            return Shuffle ? _random.Next(0, PlayList.Tracks.Count - 1) : 0;
         }
 
-        private MediaFile GetPrevFile()
+        private int GetPrevTrackIndex()
         {
-            return null;
+            if (_playedTrackIndexes.Count == 0) return -1;
+
+            var index = _playedTrackIndexes.Last();
+
+            _playedTrackIndexes.RemoveAt(_playedTrackIndexes.Count - 1);
+
+            return index;
+        }
+
+        #region INPC
+
+
+
+
+
+        #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

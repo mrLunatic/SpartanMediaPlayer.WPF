@@ -7,13 +7,19 @@ using System.Threading.Tasks;
 
 namespace SpartanMediaPlayer.Models
 {
-    public interface IMediaPlayer 
+    public interface IMediaPlayer : INotifyPropertyChanged
     {
+
+        PlayerState PlayerState { get; }
+
         /// <summary>
         /// Текущее положение на треке
         /// </summary>
         TimeSpan Position { get; }
 
+        /// <summary>
+        /// Длительность текущего трека
+        /// </summary>
         TimeSpan Duration { get; }
 
         /// <summary>
@@ -24,7 +30,7 @@ namespace SpartanMediaPlayer.Models
         /// <summary>
         /// Текущий трек
         /// </summary>
-        MediaFile MedaFile { get; }
+        MediaFile MediaFile { get; }
 
         /// <summary>
         /// Номер трека в плейлисте

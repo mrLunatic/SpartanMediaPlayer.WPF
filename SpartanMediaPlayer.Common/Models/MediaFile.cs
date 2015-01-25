@@ -13,10 +13,6 @@ namespace SpartanMediaPlayer.Models
         /// </summary>
         public Uri Uri { get; set; }
 
-        /// <summary>
-        /// Рейтинг трека
-        /// </summary>
-        public int Rating { get; set; }
 
         /// <summary>
         /// Продолжительность трека
@@ -26,7 +22,7 @@ namespace SpartanMediaPlayer.Models
         /// <summary>
         /// Исполнитель трека
         /// </summary>
-        public string Author { get; set; }
+        public string Artist { get; set; }
 
         /// <summary>
         /// Название трека

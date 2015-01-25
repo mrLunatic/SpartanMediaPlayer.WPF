@@ -30,9 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Id3">
-      <HintPath>..\packages\ID3.0.3.0\lib\net40\Id3.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -47,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\SystemMediaPlayer.cs" />
-    <Compile Include="Models\XmlExtensions.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -56,9 +52,6 @@
       <Project>{02ba6174-492d-44c0-b00b-b45786c74579}</Project>
       <Name>SpartanMediaPlayer.Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

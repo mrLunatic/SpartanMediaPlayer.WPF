@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Models\IMeidaPlayer.cs" />
     <Compile Include="Models\MediaFile.cs" />
+    <Compile Include="Models\PlayerState.cs" />
     <Compile Include="Models\PlayList.cs" />
     <Compile Include="Models\RepeatMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
