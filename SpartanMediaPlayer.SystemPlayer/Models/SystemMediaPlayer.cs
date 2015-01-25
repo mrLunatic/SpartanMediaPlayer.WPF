@@ -3,76 +3,88 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 using SpartanMediaPlayer.Annotations;
 
 namespace SpartanMediaPlayer.Models
 {
     public class SystemMediaPlayer : IMediaPlayer
     {
-        private static TimeSpan SeekStep = TimeSpan.FromSeconds(2.0);
-        private MediaPlayer _player = new MediaPlayer();
-        private PlayList _currentPlayList;
-        private MediaFile _currentFile;
-        private int _currentFileIndex = -1;
+        private readonly MediaElement _player = new MediaElement();
+        private readonly DispatcherTimer _timer = new DispatcherTimer();
 
+        private int currentTrackIndex = 0;
+        private IList<int> playedTrackIndexes = new List<int>(); 
 
-        public TimeSpan CurrentPosition
+       
+
+        #region IMediaPlayer
+
+        public TimeSpan Position
         {
             get { return _player.Position; }
-            private set
-            {
-                _player.Position = value;
-                OnPropertyChanged();
-            }
         }
 
-        public PlayList CurrentPlayList
+        public TimeSpan Duration
         {
-            get { return _currentPlayList; }
+            get { return _player.NaturalDuration.TimeSpan; }
+        }
+
+        public PlayList PlayList
+        {
+            get { return _playList; }
             set
             {
-                if (Equals(value, _currentPlayList)) return;
-                _currentPlayList = value;
-                OnPropertyChanged();
+                if (Equals(value, _playList)) return;
+                _playList = value;
+                Track = 0;
             }
         }
-        public MediaFile CurrentFile
+        private PlayList _playList;
+
+        
+        public int Track
         {
-            get { return _currentFile; }
+            get { return _track; }
             set
             {
-                if (Equals(value, _currentFile)) return;
-                _currentFile = value;
-                OnPropertyChanged();
+                _track = value;
 
-                if (value != null)
-                {
-                    _player.Open(new Uri(value.Path));
-                    Play();
-                }
+                if (PlayList == null) return;
+
+                _player.Source = PlayList.Tracks[_track].Uri;
             }
         }
 
         public double Volume
         {
             get { return _player.Volume; }
-            set
-            {
-                if (value.Equals(_player.Volume)) return;
-                _player.Volume = value;
-                OnPropertyChanged();
-            }
+            set { _player.Volume = value; }
         }
 
+        public bool Shuffle
+        {
+            get { return _shuffle; }
+            set
+            {
+                if (value.Equals(_shuffle)) return;
+                _shuffle = value;
+            }
+        }
+        private bool _shuffle;
+        private int _track;
 
+        public RepeatMode RepeatMode { get; set; }
 
         public void Play()
         {
-            if (CurrentFile != null)
-                _player.Play();
+            _player.Play();
         }
 
         public void Pause()
@@ -84,50 +96,50 @@ namespace SpartanMediaPlayer.Models
         public void Stop()
         {
             _player.Stop();
-            CurrentPosition = TimeSpan.FromSeconds(0.0);
         }
 
         public void PlayNext()
         {
-            if (CurrentPlayList == null) return;
+            Stop();
 
-            if (CurrentPlayList.Tracks.GetEnumerator().MoveNext())
-                CurrentFile = CurrentPlayList.Tracks.GetEnumerator().Current;
-        }
+            if (PlayList == null) return;
 
-        public void SeekForward(TimeSpan timeSpan)
-        {
-            if (CurrentFile == null) return;
 
-            if ((CurrentFile.Duration - CurrentPosition) < SeekStep)
-                CurrentPosition += SeekStep;
+
+
+            
+            Play();
         }
 
         public void PlayPrev()
         {
-            if (CurrentPlayList == null) return;
-
-            if (CurrentPlayList.Tracks.GetEnumerator().)
-                CurrentFile = CurrentPlayList.Tracks.GetEnumerator().Current;
+            Stop();
+            Track = GetPrevFile();
+            Play();
         }
 
-        public void SeekBackward(TimeSpan timeSpan)
+        public void Seek(TimeSpan timeSpan)
         {
-            throw new NotImplementedException();
-        }
-
-        #region INPC
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChangedEventHandler handler = ((INotifyPropertyChanged) this).PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            _player.Position = timeSpan;
         }
 
         #endregion
 
+        public SystemMediaPlayer()
+        {
+            _player.MediaEnded += OnMediaEnded;
+            _player.MediaOpened += OnMediaOpened;
+        }
+
+
+        private void OnMediaEnded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private MediaFile GetPrevFile()
+        {
+            return null;
+        }
     }
 }

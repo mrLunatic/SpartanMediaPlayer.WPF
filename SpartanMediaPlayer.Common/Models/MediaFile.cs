@@ -11,7 +11,7 @@ namespace SpartanMediaPlayer.Models
         /// <summary>
         /// Путь к файлу на локальной машине
         /// </summary>
-        public string Path { get; set; }
+        public Uri Uri { get; set; }
 
         /// <summary>
         /// Рейтинг трека
