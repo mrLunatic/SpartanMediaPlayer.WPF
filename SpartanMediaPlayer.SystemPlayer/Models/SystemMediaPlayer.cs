@@ -85,6 +85,7 @@ namespace SpartanMediaPlayer.Models
                 _mediaFile = value;
                 OnPropertyChanged();
                 _player.Source = _mediaFile.Uri;
+                Duration = _player.NaturalDuration.TimeSpan;
             }
         }
         private MediaFile _mediaFile;
@@ -149,6 +150,8 @@ namespace SpartanMediaPlayer.Models
         {
             _player.Play();
             PlayerState = PlayerState.Playing;
+            if (!_timer.IsEnabled)
+                _timer.Start();
         }
 
         public void Pause()
@@ -157,12 +160,18 @@ namespace SpartanMediaPlayer.Models
 
             _player.Pause();
             PlayerState = PlayerState.Paused;
+
+            if (_timer.IsEnabled)
+                _timer.Stop();
         }
 
         public void Stop()
         {
             _player.Stop();
             PlayerState = PlayerState.Stopped;
+
+            if (_timer.IsEnabled)
+                _timer.Stop();
         }
 
         public void PlayNext()
@@ -202,6 +211,8 @@ namespace SpartanMediaPlayer.Models
 
         public SystemMediaPlayer()
         {
+            _timer.Interval = TimeSpan.FromMilliseconds(100);
+            _timer.Tick += (sender, args) => Position = _player.Position;
             _player.MediaEnded += (sender, args) => PlayNext();
         }
 
