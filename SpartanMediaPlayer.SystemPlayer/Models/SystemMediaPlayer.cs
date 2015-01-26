@@ -209,7 +209,7 @@ namespace SpartanMediaPlayer.Models
         {
 
             if (RepeatMode == RepeatMode.One)
-                return _currentTrackIndex;
+                return Track;
 
             var allIndexes = Enumerable.Range(0, PlayList.Tracks.Count);
 

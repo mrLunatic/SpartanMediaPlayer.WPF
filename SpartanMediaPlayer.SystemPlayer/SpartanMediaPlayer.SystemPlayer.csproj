@@ -48,9 +48,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SpartanMediaPlayer.Common\SpartanMediaPlayer.Common.csproj">
-      <Project>{02ba6174-492d-44c0-b00b-b45786c74579}</Project>
-      <Name>SpartanMediaPlayer.Common</Name>
+    <ProjectReference Include="..\SpartanMediaPlayer.Models\SpartanMediaPlayer.Models.csproj">
+      <Project>{bb3a2868-577d-4574-8a20-6166c0620e4d}</Project>
+      <Name>SpartanMediaPlayer.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -13,6 +13,7 @@ namespace SpartanMediaPlayer.Models
         /// </summary>
         public Uri Uri { get; set; }
 
+        public byte[] Image { get; set; }
 
         /// <summary>
         /// Продолжительность трека
